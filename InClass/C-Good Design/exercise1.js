@@ -39,34 +39,72 @@
    
    */
 
+const HIGH_TAX = 0.1;
+const MIDDLE_TAX = 0.8;
+const LOW_TAX = 0.5;
 
-function myFunction(salary, taxCode, incomeTax1, incomeTax2, ownsCar) {
-  var totalIncomeTax = incomeTax1 + incomeTax2;
-  var studentLoan = (salary - 17775) * 0.09;
-  var originalSalary = salary;
-  var nationalInsurance = null;
+function calculatingSalary(salary, taxCode, incomeTax) {   
+   const totalIncomeTax = calculateTotalIncomeTax(incomeTax);
+   const studentLoan = calculateStudentLoan(salary);
+   const originalSalary = salary;
+   const nationalInsurance = calculateNationalInsurance(taxCode, salary);  
 
-  if (taxCode === "1150L") {
-    nationalInsurance = salary * 0.1;
-  } else if (taxCode === "ST") {
-    nationalInsurance = salary * 0.05;
-  } else {
-    nationalInsurance = salary * 0.08;
-  }
+   const deductions = [nationalInsurance, totalIncomeTax, studentLoan];
+   const netSalary = calculateNetSalary(deductions, salary);
 
-  var deductions = [nationalInsurance, totalIncomeTax, studentLoan];
 
-  salary = salary - deductions[0];
-  salary = salary - deductions[1];
-  salary = salary - deductions[2];
-
-  return (
-    "Your gross income is £" +
-    originalSalary.toString() +
-    " and your net income is £" +
-    salary.toString() +
-    "."
-  );
+   return (
+      "Your gross income is ï¿½" +
+      originalSalary.toString() +
+      " and your net income is ï¿½" +
+      netSalary.toString() +
+      "."
+   );
 }
 
-console.log(myFunction(28000, "1150L", 1000, 580, false));
+
+console.log(calculatingSalary(28000, "1150L", [1000, 580], false));
+
+/**
+ * Depending on the Tax Code, we apply a different appraisal.
+ * @param {*} taxCode 
+ * @param {*} salary 
+ */
+function calculateNationalInsurance(taxCode, salary){
+   let nationalInsurance = null;
+
+   if (taxCode === "1150L") {
+      nationalInsurance = salary * HIGH_TAX;
+   }
+   else if (taxCode === "ST") {
+      nationalInsurance = salary * LOW_TAX;
+   } 
+   else {
+      nationalInsurance = salary * MIDDLE_TAX;
+   }
+
+   return nationalInsurance;
+}
+
+function calculateTotalIncomeTax(incomeTax) {
+   return incomeTax.reduce(additioner);
+}
+
+function additioner(accumulator, currentValue) {
+   return accumulator + currentValue;
+}
+
+function calculateStudentLoan(salary) {
+   return (salary - 17775) * 0.09;
+}
+
+function calculateNetSalary(deductions, salary) {
+   return deductions.reduce(substractioner, salary); 
+}
+
+function substractioner(accumulator, currentValue) {
+   return accumulator - currentValue;
+}
+
+
+
